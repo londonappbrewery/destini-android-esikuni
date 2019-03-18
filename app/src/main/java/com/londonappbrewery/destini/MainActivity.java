@@ -1,5 +1,6 @@
 package com.londonappbrewery.destini;
 
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,18 +9,24 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    private final String STORY_INDEX_KEY = "StoryIndexKey";
+    private final String STORY_TEXT_KEY = "StoryTextKey";
+    private final String TOP_BUTTON_TEXT_KEY = "TopButtonTextKey";
+    private final String BOTTOM_BUTTON_TEXT_KEY = "BottomButtonTextKey";
+    private final String STORY_BUNDLE_KEY = "StoryBundleKey";
+
     // TODO: Steps 4 & 8 - Declare member variables here:
-    TextView mStoryTextView;
-    Button mTopButton;
-    Button mBottomButton;
-    Button mResetButton;
-    int mStoryIndex = 1;
+    private TextView mStoryTextView;
+    private Button mTopButton;
+    private Button mBottomButton;
+    private Button mResetButton;
+    private int mStoryIndex = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         // TODO: Step 5 - Wire up the 3 views from the layout to the member variables:
         mStoryTextView = findViewById(R.id.storyTextView);
@@ -88,5 +95,37 @@ public class MainActivity extends AppCompatActivity {
                 mBottomButton.setText(R.string.T1_Ans2);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Bundle storyBundle = new Bundle();
+
+        storyBundle.putInt(STORY_INDEX_KEY, mStoryIndex);
+        storyBundle.putString(STORY_TEXT_KEY, mStoryTextView.getText().toString());
+        storyBundle.putString(TOP_BUTTON_TEXT_KEY, mTopButton.getText().toString());
+        storyBundle.putString(BOTTOM_BUTTON_TEXT_KEY, mBottomButton.getText().toString());
+
+        outState.putBundle(STORY_BUNDLE_KEY, storyBundle);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Bundle storyBundle = savedInstanceState.getBundle(STORY_BUNDLE_KEY);
+        mStoryIndex = storyBundle.getInt(STORY_INDEX_KEY);
+        mStoryTextView.setText(storyBundle.getString(STORY_TEXT_KEY));
+
+        if (mStoryIndex == 1 || mStoryIndex == 2 || mStoryIndex == 3) {
+            mTopButton.setText(storyBundle.getString(TOP_BUTTON_TEXT_KEY));
+            mBottomButton.setText(storyBundle.getString(BOTTOM_BUTTON_TEXT_KEY));
+        } else {
+            mTopButton.setVisibility(View.GONE);
+            mBottomButton.setVisibility(View.GONE);
+            mResetButton.setVisibility(View.VISIBLE);
+        }
     }
 }
